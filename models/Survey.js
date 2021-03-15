@@ -24,8 +24,14 @@ const Survey = db.define('Survey', {
   username: {
     type: DataTypes.STRING
   },
+  // type: DataTypes.ARRAY(DataTypes.JSONB)
   questions: {
-    // type: DataTypes.ARRAY(DataTypes.JSONB)
+    type: DataTypes.JSONB
+  },
+  answers: {
+    type: DataTypes.JSONB
+  },
+  payload: {
     type: DataTypes.JSONB
   },
   createdAt: {
