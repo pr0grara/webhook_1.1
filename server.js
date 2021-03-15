@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
     res.status(200).end();
 });
 
-app.put('/', async (req, res) => {
+app.post('/', async (req, res) => {
     const id = await Survey.findAll()
         .then(res => res.map(r => r).length)
         .catch(err => console.log(err));
