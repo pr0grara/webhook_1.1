@@ -34,9 +34,9 @@ app.get('/', (req, res) => {
     // console.log(JSON.stringify(req.body, null, 4));
     // console.log(req.body.form_response);
     // console.log(req.body.answers[0].email[5]);
-    var arr = req.body.form_response.answers;
-    arr = arr.map(el => el[el.type]);
-    res.send(arr);
+    // var arr = req.body.form_response.answers;
+    // arr = arr.map(el => el[el.type]);
+    // res.send(arr);
     // res.send((req.body.form_response.definition.fields))
     res.status(200).end();
 });
