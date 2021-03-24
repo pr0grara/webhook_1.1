@@ -1,7 +1,8 @@
 require('dotenv/config');
 const express = require('express');
 const { Sequelize } = require('sequelize');
-const Survey = require("./models/Survey");
+const TakenSurvey = require("./models/TakenSurvey");
+const Answer = require("./models/Answer");
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -27,45 +28,40 @@ app.use(express.text());
 // });
 
 app.get('/', (req, res) => {
-    // console.log(':)');
-    // console.log(req.body);
-    // console.log(Object.keys(req.body[0].answers));
-    // console.log(JSON.parse(req.body));
-    // console.log(JSON.stringify(req.body, null, 4));
-    // console.log(req.body.form_response);
-    // console.log(req.body.answers[0].email[5]);
-    // var arr = req.body.form_response.answers;
-    // arr = arr.map(el => el[el.type]);
-    // res.send(arr);
-    // res.send((req.body.form_response.definition.fields))
     res.status(200).end();
 });
 
 app.post('/', async (req, res) => {
-    const id = await Survey.findAll()
-        .then(res => res.map(r => r).length)
-        .catch(err => console.log(err));
-    console.log(id)
+    const takenSurveyId = Math.floor(Math.random() * 100000000);
+    var respondent = req.body.form_response.answers;
+    respondent = respondent.filter(ans => ans.type === email);
+    respondent = respondent[0].email
     var questions = req.body.form_response.definition.fields;
-    questions = questions.map(el => el.title);
+    questions = questions.map(question => question.title);
+
     var answers = req.body.form_response.answers;
-    answers = answers.map(el => el[el.type]);
-    const newSurvey = new Survey({
-       id,
-       username: req.body.form_response.definition.fields[0].id,
-       questions,
-       answers,
-       payload: req.body,
-       createdAt: Date(),
-       updatedAt: Date(),
+    answers = answers.forEach(ans => {
+        var newAnswer = new Answer({
+            answer: ans[ans.type],
+            taken_survey_id: takenSurveyId,
+            typeform_question_id: ans.field.id,
+        })
+        newAnswer
+            .save()
+            .then(res => res.status(200).end())
+            .catch(err => console.log(err));
     })
-    // console.log(req.body.form_response.definition.fields)
-    console.log(req.body.form_response)
-    newSurvey
+    
+    var newTakenSurvey = new TakenSurvey({
+        id: takenSurveyId,
+        createdAt: Date(),
+        respondent,
+        questions
+    })
+    newTakenSurvey
         .save()
         .then(result => res.status(200).end())
         .catch(err => console.log(err));
-    // res.status(200).end();
 })
 
 app.listen(port, () => console.log(`app listening on port ${port}`));
