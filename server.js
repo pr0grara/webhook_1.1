@@ -3,6 +3,7 @@ const express = require('express');
 const { Sequelize } = require('sequelize');
 const TakenSurvey = require("./models/TakenSurvey");
 const Answer = require("./models/Answer");
+const idGenerator = require("./util");
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -32,23 +33,34 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-    const takenSurveyId = Math.floor(Math.random() * 100000000);
+    const takenSurveyId = idGenerator();
     var respondent = req.body.form_response.answers;
-    respondent = respondent.filter(ans => ans.type === email);
+    respondent = respondent.filter(ans => ans["type"] === "email");
     respondent = respondent[0].email
     var questions = req.body.form_response.definition.fields;
     questions = questions.map(question => question.title);
 
     var answers = req.body.form_response.answers;
     answers = answers.forEach(ans => {
+        var answer = "";
+        switch (ans.type) {
+            case "choice":
+                answer = ans.choice.label;
+                break
+            case "choices":
+                console.log(ans)
+                answer = ans.choices.labels.join(', ');
+                break
+            default:
+                answer = ans[ans.type];
+        }
         var newAnswer = new Answer({
-            answer: ans[ans.type],
+            answer,
             taken_survey_id: takenSurveyId,
             typeform_question_id: ans.field.id,
         })
         newAnswer
             .save()
-            .then(res => res.status(200).end())
             .catch(err => console.log(err));
     })
     

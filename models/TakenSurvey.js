@@ -1,9 +1,9 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const db = new Sequelize(process.env.PG_CONN_STRING);
 
-const Answers = db.define('answers', {
+const TakenSurvey = db.define('taken_surveys', {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.TEXT,
     allowNull: false,
     primaryKey: true
   },
@@ -14,8 +14,8 @@ const Answers = db.define('answers', {
     type: DataTypes.TEXT
   },
   questions: {
-    type: DataTypes.ARRAY
+    type: Sequelize.ARRAY(DataTypes.STRING)
   }
 })
 
-module.exports = Answers;
+module.exports = TakenSurvey;
