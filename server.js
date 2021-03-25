@@ -48,7 +48,6 @@ app.post('/', async (req, res) => {
                 answer = ans.choice.label;
                 break
             case "choices":
-                console.log(ans)
                 answer = ans.choices.labels.join(', ');
                 break
             default:
