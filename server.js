@@ -42,30 +42,32 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
-    const id = await Survey.findAll()
-        .then(res => res.map(r => r).length)
-        .catch(err => console.log(err));
-    console.log(id)
+    let ids = await Survey.findAll({
+        attributes: ['id']
+    });
+    ids = ids.map(obj => obj.dataValues.id);
+    ids = ids.sort((a, b) => b - a);
+    const id = ids[0] + 1;
+    
     var questions = req.body.form_response.definition.fields;
     questions = questions.map(el => el.title);
     var answers = req.body.form_response.answers;
     answers = answers.map(el => el[el.type]);
     const newSurvey = new Survey({
        id,
-       username: req.body.form_response.definition.fields[0].id,
+       username: req.body.form_response.answers[0].text,
        questions,
        answers,
        payload: req.body,
        createdAt: Date(),
        updatedAt: Date(),
     })
-    // console.log(req.body.form_response.definition.fields)
-    console.log(req.body.form_response)
+    
     newSurvey
         .save()
         .then(result => res.status(200).end())
         .catch(err => console.log(err));
-    // res.status(200).end();
+    res.status(200).end();
 })
 
 app.listen(port, () => console.log(`app listening on port ${port}`));

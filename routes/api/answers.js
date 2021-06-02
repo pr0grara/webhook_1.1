@@ -18,7 +18,7 @@ router.post('/new', (req, res) => {
     resultNo
   });
 
-  console.log(newAnswer);
+  // console.log(newAnswer);
   // newAnswer
   //   .save()
   //   .then(answer => res.json(answer))
