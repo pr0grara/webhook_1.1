@@ -1,7 +1,9 @@
 require('dotenv/config');
 const express = require('express');
 const { Sequelize } = require('sequelize');
-const Survey = require("./models/Survey");
+const TakenSurvey = require("./models/TakenSurvey");
+const Answer = require("./models/Answer");
+const idGenerator = require("./util");
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -27,17 +29,6 @@ app.use(express.text());
 // });
 
 app.get('/', (req, res) => {
-    // console.log(':)');
-    // console.log(req.body);
-    // console.log(Object.keys(req.body[0].answers));
-    // console.log(JSON.parse(req.body));
-    // console.log(JSON.stringify(req.body, null, 4));
-    // console.log(req.body.form_response);
-    // console.log(req.body.answers[0].email[5]);
-    // var arr = req.body.form_response.answers;
-    // arr = arr.map(el => el[el.type]);
-    // res.send(arr);
-    // res.send((req.body.form_response.definition.fields))
     res.status(200).end();
 });
 
@@ -48,9 +39,7 @@ app.post('/', async (req, res) => {
     ids = ids.map(obj => obj.dataValues.id);
     ids = ids.sort((a, b) => b - a);
     const id = ids[0] + 1;
-    
-    var questions = req.body.form_response.definition.fields;
-    questions = questions.map(el => el.title);
+
     var answers = req.body.form_response.answers;
     answers = answers.map(el => el[el.type]);
     const newSurvey = new Survey({
